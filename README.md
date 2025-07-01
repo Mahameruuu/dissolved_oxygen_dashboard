@@ -19,10 +19,6 @@ dissolved_oxygen_dashboard/
 │ └── ...
 └── README.md
 
-yaml
-Copy
-Edit
-
 ---
 
 ## 🧠 Project Overview
@@ -83,7 +79,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-###3. Jalankan Frontend (React)
+### 3. Jalankan Frontend (React)
 cd ../frontend
 ```
 npm install
@@ -93,11 +89,11 @@ Pastikan backend berjalan di http://localhost:5000 dan frontend di http://localh
 
 📊 Fitur Dashboard
 Fitur	Keterangan
-🔍 Prediksi DO	Menampilkan prediksi DO berdasarkan data sensor
-🚨 Deteksi Anomali	Menggunakan control chart untuk deteksi outlier dari DO/pH/suhu/dll
-💡 Insight	Menampilkan saran berdasarkan prediksi dan kondisi saat ini
-📉 Grafik Real-time	Visualisasi waktu nyata dari nilai sensor
-📋 Tabel Telemetri	Menampilkan seluruh data sensor dalam bentuk tabel
+- 🔍 Prediksi DO	Menampilkan prediksi DO berdasarkan data sensor
+- 🚨 Deteksi Anomali	Menggunakan control chart untuk deteksi outlier dari DO/pH/suhu/dll
+- 💡 Insight	Menampilkan saran berdasarkan prediksi dan kondisi saat ini
+- 📉 Grafik Real-time	Visualisasi waktu nyata dari nilai sensor
+- 📋 Tabel Telemetri	Menampilkan seluruh data sensor dalam bentuk tabel
 
 📂 Catatan
 Folder model/ tidak di-commit karena keterbatasan GitHub. Model tersedia di Google Drive.
