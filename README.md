@@ -98,6 +98,6 @@ Fitur	Keterangan
 
 👨‍💻 Kontributor
 
-Nama: Maha Meru
-Role: Fullstack Developer & Machine Learning Engineer
-GitHub: @Mahameruuu
+**Nama:** Maha Meru<br>
+**Role:** Fullstack Developer & Data Scientist<br>
+**GitHub:** [@Mahameruuu](https://github.com/Mahameruuu)
