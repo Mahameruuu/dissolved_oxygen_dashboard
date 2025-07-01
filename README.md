@@ -4,6 +4,7 @@ Proyek ini merupakan aplikasi berbasis web yang digunakan untuk memonitor kualit
 
 ## 📁 Struktur Repositori
 
+```text
 dissolved_oxygen_dashboard/
 ├── backend/
 │ ├── app.py
@@ -18,7 +19,7 @@ dissolved_oxygen_dashboard/
 │ │ └── pages/
 │ └── ...
 └── README.md
-
+```
 ---
 
 ## 🧠 Project Overview
@@ -52,7 +53,7 @@ Model yang digunakan adalah **regresi** untuk memprediksi nilai DO. Model dilati
 
 ### 🔗 Link Model (Google Drive)
 
-[📁 Download Model DO](https://drive.google.com/drive/folder/your-link-here)
+[📁 Download Model DO](https://drive.google.com/drive/folders/12oVVSQCa9g3nS01bdBQ7Fs8HGs6zxg10?usp=sharing)
 
 ---
 
@@ -95,14 +96,8 @@ Fitur	Keterangan
 - 📉 Grafik Real-time	Visualisasi waktu nyata dari nilai sensor
 - 📋 Tabel Telemetri	Menampilkan seluruh data sensor dalam bentuk tabel
 
-📂 Catatan
-Folder model/ tidak di-commit karena keterbatasan GitHub. Model tersedia di Google Drive.
-
-Proyek ini ditujukan sebagai prototipe untuk kebutuhan akademik dan riset.
-
 👨‍💻 Kontributor
+
 Nama: Maha Meru
-
 Role: Fullstack Developer & Machine Learning Engineer
-
 GitHub: @Mahameruuu
