@@ -64,28 +64,32 @@ Model yang digunakan adalah **regresi** untuk memprediksi nilai DO. Model dilati
 
 ### 1. Clone Repository
 
-```bash
+```
 git clone https://github.com/Mahameruuu/dissolved_oxygen_dashboard.git
 cd dissolved_oxygen_dashboard
-2. Jalankan Backend (Flask)
-bash
-Copy
-Edit
+```
+
+### 2. Jalankan Backend (Flask)
+
+```
 cd backend
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
+```
 
 # Jalankan Flask
+```
 python app.py
-3. Jalankan Frontend (React)
-bash
-Copy
-Edit
+```
+
+###3. Jalankan Frontend (React)
 cd ../frontend
+```
 npm install
 npm run dev
-Pastikan backend berjalan di http://localhost:5000 dan frontend di http://localhost:5173.
+Pastikan backend berjalan di http://localhost:5000 dan frontend di http://localhost:3000.
+```
 
 📊 Fitur Dashboard
 Fitur	Keterangan
