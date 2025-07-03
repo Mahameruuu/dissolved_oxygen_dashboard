@@ -24,20 +24,50 @@ function ControlPanel({ latestData }) {
   };
 
   const metrics = [
-    { label: "Wireless Smart Aquatic Controller", value: "Connected" },
-    { label: "Smart Fertigation System Wired Decoder", value: "Active" },
-    { label: "Water pH & Temp Sensor", value: "pH: 6.8, Temp: 27°C" },
-    { label: "Water EC Sensor", value: "1.2 mS/cm" },
-    { label: "Water TDS Sensor", value: "520 ppm" },
-    { label: "Water COD Sensor", value: "35 mg/L" },
-    { label: "Water DO Sensor", value: `${latestData?.DO?.toFixed(2) || "-"} mg/L` },
-    { label: "Water NH3 & N2 Sensor", value: "1.8 mg/L" },
-    { label: "Water Salinity Sensor", value: "35 PSU" },
-    { label: "Water Turbidity Sensor", value: "208 NTU" },
+    { label: "Wireless Smart Aquatic Controller", value: "✅ Terhubung" },
+    { label: "Smart Fertigation System Wired Decoder", value: "✅ Aktif" },
+    {
+      label: "Water pH & Temp Sensor",
+      value:
+        latestData?.pH && latestData?.Temp
+          ? `pH: ${latestData.pH.toFixed(1)} (${latestData.pH >= 6.5 && latestData.pH <= 8.5 ? "Baik" : "Buruk"}), Temp: ${latestData.Temp.toFixed(1)}°C`
+          : "-",
+    },
+    {
+      label: "Water Conductivity",
+      value: latestData?.Cond
+        ? `${latestData.Cond.toFixed(1)} µS/cm (${latestData.Cond < 1000 ? "Normal" : "Tinggi"})`
+        : "-",
+    },
+    {
+      label: "Water DO Sensor",
+      value: latestData?.DO
+        ? `${latestData.DO.toFixed(2)} mg/L (${latestData.DO >= 6 ? "Baik" : latestData.DO >= 4 ? "Cukup" : "Rendah"})`
+        : "-",
+    },
+    {
+      label: "Water NH3 & N2 Sensor",
+      value: latestData?.Ammonia
+        ? `${latestData.Ammonia.toFixed(2)} mg/L (${latestData.Ammonia < 1.5 ? "Aman" : "Berbahaya"})`
+        : "-",
+    },
+    {
+      label: "Water Salinity Sensor",
+      value: latestData?.Salinity
+        ? `${latestData.Salinity.toFixed(1)} PSU (${latestData.Salinity >= 30 && latestData.Salinity <= 38 ? "Normal" : "Tidak Normal"})`
+        : "-",
+    },
+    {
+      label: "Water Turbidity Sensor",
+      value: latestData?.WaterClarity
+        ? `${latestData.WaterClarity.toFixed(0)} NTU (${latestData.WaterClarity < 300 ? "Jernih" : "Keruh"})`
+        : "-",
+    },
     { label: "Aerator Type", value: "Paddlewheel" },
-    { label: "Electric Power Monitoring", value: "230V / 50Hz" },
-    { label: "Water Supply Monitoring", value: "Normal" },
+    { label: "Electric Power Monitoring", value: "⚡ Normal (230V / 50Hz)" },
+    { label: "Water Supply Monitoring", value: "💧 Normal" },
   ];
+
 
   return (
     <div className="col-12">

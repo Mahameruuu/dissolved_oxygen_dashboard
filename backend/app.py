@@ -1,27 +1,26 @@
 from flask import Flask, request, jsonify
-import numpy as np
-import joblib
-import pandas as pd
 from flask_cors import CORS
-from utils.insight import get_insight  # Tetap gunakan insight DO
+import numpy as np
+import pandas as pd
+import joblib
+from tensorflow.keras.models import load_model 
+from utils.insight import get_insight  # Fungsi insight status DO
+from matplotlib.path import Path
+import os
 
 app = Flask(__name__)
-CORS(app)  # Izinkan akses dari React
+CORS(app)  # Allow CORS
 
 # ===============================
 # 🔹 Load Models
 # ===============================
-
-# Model prediksi DO
+# Model prediksi DO (RandomForest)
 model = joblib.load("model/do_model.pkl")
 
-# Model deteksi anomali (PCA + Convex Hull)
+# Model deteksi anomali PCA + Convex Hull
 pca = joblib.load("model/pca_model.pkl")
 train_pca_data = joblib.load("model/train_pca_data.pkl")
 hull_vertices = joblib.load("model/hull_vertices.pkl")
-
-# Membuat class AnomalyDetectorPCAConvexHull langsung di sini (jika belum dipisah ke utils)
-from matplotlib.path import Path
 
 class AnomalyDetectorPCAConvexHull:
     def __init__(self, pca, hull_path):
@@ -37,13 +36,16 @@ class AnomalyDetectorPCAConvexHull:
         if input_data.ndim == 1:
             input_data = input_data.reshape(1, -1)
         elif input_data.shape[1] != 3:
-            raise ValueError(f"Input must have 3 features (Temp, pH, DO)")
+            raise ValueError("Input must have 3 features (Temp, pH, DO)")
         pca_transformed = self.pca.transform(input_data)
         is_inside = self.hull_path.contains_point(pca_transformed[0])
         return not is_inside, pca_transformed
 
-# Inisialisasi detektor
 detector = AnomalyDetectorPCAConvexHull.load(pca, train_pca_data, hull_vertices)
+
+# Model prediksi LSTM dan scaler
+lstm_model = load_model("model/do_lstm_model.keras")
+scaler_lstm = joblib.load("model/scaler.save")
 
 # ===============================
 # 🔹 Endpoint 1: Prediksi Manual
@@ -109,7 +111,7 @@ def predict_bulk():
         return jsonify({"error": str(e)}), 400
 
 # ===============================
-# 🔹 Endpoint 3: Deteksi Anomali (PCA + Hull)
+# 🔹 Endpoint 3: Deteksi Anomali
 # ===============================
 @app.route("/detect-anomaly", methods=["POST"])
 def detect_anomaly():
@@ -130,7 +132,52 @@ def detect_anomaly():
         return jsonify({"error": str(e)}), 400
 
 # ===============================
-# 🔹 Run Flask App
+# 🔹 Endpoint 4: Forecast LSTM 24 Jam
+# ===============================
+@app.route("/predict-forecast", methods=["GET"])
+def predict_forecast():
+    try:
+        df = pd.read_csv("lake_data/lakeoxygen_cleaned.csv", parse_dates=["Date.Time"])
+        df = df[["Date.Time", "DO"]].dropna()
+        df = df.groupby("Date.Time").mean().sort_index()
+        df = df.asfreq("H").fillna(method="ffill")
+
+        last_values = df["DO"].values[-24:].reshape(-1, 1)
+        if len(last_values) < 24:
+            return jsonify({"error": "Data kurang dari 24 jam terakhir"}), 400
+
+        scaled_input = scaler_lstm.transform(last_values)
+
+        seq_len = 24
+        input_seq = scaled_input.copy()
+        predictions = []
+
+        for _ in range(24):
+            X_input = input_seq[-seq_len:].reshape(1, seq_len, 1)
+            pred = lstm_model.predict(X_input, verbose=0)[0][0]
+            predictions.append(pred)
+            input_seq = np.append(input_seq, [[pred]], axis=0)
+
+        predicted_DO = scaler_lstm.inverse_transform(np.array(predictions).reshape(-1, 1)).flatten()
+
+        last_time = df.index[-1]
+        future_times = pd.date_range(start=last_time + pd.Timedelta(hours=1), periods=24, freq="H")
+
+        result = [
+            {
+                "Date.Time": t.strftime("%Y-%m-%d %H:%M:%S"),
+                "predicted_DO": round(do_val, 2),
+                "insight": get_insight(do_val)
+            }
+            for t, do_val in zip(future_times, predicted_DO)
+        ]
+
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ===============================
+# 🔹 Run App
 # ===============================
 if __name__ == "__main__":
     app.run(debug=True)

@@ -12,6 +12,7 @@ function Dashboard() {
   const [latestData, setLatestData] = useState(null);
   const [anomalyStatus, setAnomalyStatus] = useState(null);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("iot-anomaly");
 
   const navigate = useNavigate();
 
@@ -58,7 +59,6 @@ function Dashboard() {
     }
   }, [latestData]);
 
-  // Helper untuk mengambil sparkline
   const getSpark = (key) =>
     bulkDataList.slice(-10).map((d) => d[key]).filter((v) => typeof v === "number");
 
@@ -72,6 +72,7 @@ function Dashboard() {
 
       {error && <div className="alert alert-danger text-center">{error}</div>}
 
+      {/* Info Panel + Prediksi DO */}
       <div className="row mb-4">
         <div className="col-md-4">
           <InfoPanel />
@@ -84,6 +85,7 @@ function Dashboard() {
           )}
         </div>
 
+        {/* Sensor & Status Cards */}
         <div className="col-md-8">
           <div className="row g-3">
             <SensorCard
@@ -137,47 +139,84 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Chart Anomali */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <h5 className="fw-bold">📊 Anomaly DO Saturation</h5>
-          <ControlChart data={bulkDataList} field="DOsat" upperLimit={110} lowerLimit={80} />
-        </div>
-      </div>
-      <div className="row mb-4">
-        <div className="col-12">
-          <h5 className="fw-bold">🌊 Anomaly Salinity</h5>
-          <ControlChart data={bulkDataList} field="Salinity" upperLimit={38} lowerLimit={30} />
-        </div>
-      </div>
-      <div className="row mb-4">
-        <div className="col-12">
-          <h5 className="fw-bold">🧪 Anomaly Ammonia</h5>
-          <ControlChart data={bulkDataList} field="Ammonia" upperLimit={5} lowerLimit={0} />
-        </div>
-      </div>
-      <div className="row mb-4">
-        <div className="col-12">
-          <h5 className="fw-bold">💧 Anomaly Water Clarity</h5>
-          <ControlChart data={bulkDataList} field="WaterClarity" upperLimit={400} lowerLimit={100} />
-        </div>
-      </div>
-
-      <div className="row mb-4">
-        <ControlPanel latestData={latestData} />
+      {/* Tab Buttons */}
+      <div className="btn-group w-100 mb-4" role="group">
+        <button
+          className={`btn ${activeTab === "iot-anomaly" ? "btn-warning" : "btn-outline-warning"}`}
+          onClick={() => setActiveTab("iot-anomaly")}
+        >
+          IoT – Anomaly Sensor
+        </button>
+        <button
+          className={`btn ${activeTab === "do-saturation" ? "btn-success" : "btn-outline-success"}`}
+          onClick={() => setActiveTab("do-saturation")}
+        >
+          AI – DO Saturation Predict
+        </button>
+        <button className="btn btn-outline-secondary" disabled>
+          AI – Salinity Predict
+        </button>
+        <button className="btn btn-outline-secondary" disabled>
+          AI – Ammonia Predict
+        </button>
+        <button className="btn btn-outline-secondary" disabled>
+          AI – Water Clarity Predict
+        </button>
+        <button className="btn btn-outline-secondary" disabled>
+          AI – PH Predict
+        </button>
       </div>
 
-      <div className="row mb-4">
-        <div className="col-12">
-          <WaterChart data={bulkDataList} />
+      {/* IoT – Failure Sensor Tab */}
+      {activeTab === "iot-anomaly" && (
+      <>
+        <div className="row mb-4">
+          <div className="col-12">
+            <h5 className="fw-bold">📊 Failure DO Saturation</h5>
+            <ControlChart data={bulkDataList} field="DOsat" upperLimit={110} lowerLimit={80} />
+          </div>
         </div>
-      </div>
+        <div className="row mb-4">
+          <div className="col-12">
+            <h5 className="fw-bold">🌊 Failure Salinity</h5>
+            <ControlChart data={bulkDataList} field="Salinity" upperLimit={38} lowerLimit={30} />
+          </div>
+        </div>
+        <div className="row mb-4">
+          <div className="col-12">
+            <h5 className="fw-bold">🧪 Failure Ammonia</h5>
+            <ControlChart data={bulkDataList} field="Ammonia" upperLimit={5} lowerLimit={0} />
+          </div>
+        </div>
+        <div className="row mb-4">
+          <div className="col-12">
+            <h5 className="fw-bold">💧 Failure Water Clarity</h5>
+            <ControlChart data={bulkDataList} field="WaterClarity" upperLimit={400} lowerLimit={100} />
+          </div>
+        </div>
+      </>
+    )}
 
-      <div className="row mb-4">
-        <div className="col-12">
-          <TelemetryTable data={bulkDataList} />
-        </div>
-      </div>
+
+      {/* AI – DO Saturation Predict Tab */}
+      {activeTab === "do-saturation" && (
+        <>
+          <div className="row mb-4">
+            <ControlPanel latestData={latestData} />
+          </div>
+          <div className="row mb-4">
+            <div className="col-12">
+              <h5 className="fw-bold">📈 Grafik Kualitas Air</h5>
+              <WaterChart data={bulkDataList} />
+            </div>
+          </div>
+          <div className="row mb-4">
+            <div className="col-12">
+              <TelemetryTable data={bulkDataList} />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

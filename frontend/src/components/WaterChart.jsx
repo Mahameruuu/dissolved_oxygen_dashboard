@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 
 function WaterChart({ data }) {
@@ -15,58 +16,62 @@ function WaterChart({ data }) {
     return <p className="text-muted text-center">⏳ Grafik belum tersedia.</p>;
   }
 
+  const upperLimit = 8;
+  const lowerLimit = 4;
+
+  // Format data dengan label lengkap (tanggal + waktu)
   const chartData = data.slice(-100).map((d) => {
-    const waktu = new Date(d["Date.Time"]).toLocaleTimeString("id-ID", {
+    const dateObj = new Date(d["Date.Time"]);
+    const label = dateObj.toLocaleString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
     });
 
     return {
-      waktu,
-      Temperature: d?.Temp ?? null,
-      pH: d?.pH ?? null,
-      DO: d?.predicted_DO ?? null,
+      label,
+      DO_Actual: d?.DO ?? null,
     };
   });
 
   return (
     <div>
-      <h5 className="text-center">📊 Grafik Kualitas Air</h5>
+      <h5 className="text-center">
+        📊 Grafik DO Aktual (mg/L)
+        <br />
+        <small className="text-muted">
+          {chartData[0]?.label} s/d {chartData[chartData.length - 1]?.label}
+        </small>
+      </h5>
+
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
           <CartesianGrid stroke="#ccc" />
-          <XAxis dataKey="waktu" />
+          <XAxis dataKey="label" tick={{ fontSize: 10 }} interval={9} />
           <YAxis
             label={{
-              value: "Nilai Parameter",
+              value: "DO (mg/L)",
               angle: -90,
               position: "insideLeft",
             }}
           />
-          <Tooltip />
+          <Tooltip
+            formatter={(value) => [`${value?.toFixed?.(2)} mg/L`, "DO Aktual"]}
+            labelFormatter={(label) => `Waktu: ${label}`}
+          />
           <Legend />
           <Line
             type="monotone"
-            dataKey="Temperature"
-            stroke="#e74c3c"
-            name="Temperature (°C)"
+            dataKey="DO_Actual"
+            stroke="#2ecc71"
+            name="DO Aktual (mg/L)"
             dot={false}
           />
-          <Line
-            type="monotone"
-            dataKey="pH"
-            stroke="#f1c40f"
-            name="pH"
-            dot={false}
-          />
-          <Line
-            type="monotone"
-            dataKey="DO"
-            stroke="#2980b9"
-            name="DO (mg/L)"
-            dot={false}
-          />
+          <ReferenceLine y={upperLimit} label="Upper Limit" stroke="red" strokeDasharray="3 3" />
+          <ReferenceLine y={lowerLimit} label="Lower Limit" stroke="red" strokeDasharray="3 3" />
         </LineChart>
       </ResponsiveContainer>
     </div>

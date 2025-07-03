@@ -7,7 +7,7 @@ function InfoPanel() {
   return (
     <div className="card shadow-sm mb-3">
       <div className="card-body">
-        <h5 className="fw-bold">KOBELCO-001 PoC</h5>
+        <h5 className="fw-bold">BARAMULTI</h5>
         <p className="mb-1"><strong>Pond Name:</strong> {pondInfo.name}</p>
         <p className="mb-1"><strong>Shrimp Species:</strong> {pondInfo.species} 🦐</p>
         <p className="mb-1"><strong>Stocking Age:</strong> {pondInfo.age} days</p>

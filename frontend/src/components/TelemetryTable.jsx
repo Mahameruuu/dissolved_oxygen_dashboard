@@ -5,7 +5,11 @@ function TelemetryTable({ data }) {
   const rowsPerPage = 20;
 
   if (!data || data.length === 0) {
-    return <p className="text-muted text-center">⏳ Data telemetri belum tersedia.</p>;
+    return (
+      <p className="text-muted text-center">
+        ⏳ Data prediksi belum tersedia.
+      </p>
+    );
   }
 
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -14,7 +18,7 @@ function TelemetryTable({ data }) {
 
   return (
     <div className="table-responsive">
-      <h5 className="text-center">📋 Tabel Telemetri Prediksi DO</h5>
+      <h5 className="text-center">📈 Prediksi DO 24 Jam ke Depan</h5>
 
       <table className="table table-bordered table-striped table-sm">
         <thead className="table-dark">
@@ -22,14 +26,8 @@ function TelemetryTable({ data }) {
             <th>No</th>
             <th>Tanggal</th>
             <th>Waktu</th>
-            <th>DO Aktual</th>
-            <th>DO Prediksi</th>
+            <th>DO Prediksi (mg/L)</th>
             <th>Status</th>
-            <th>pH</th>
-            <th>Temp (°C)</th>
-            <th>Cond (µS/cm)</th>
-            <th>Depth (m)</th>
-            <th>DOsat (%)</th>
           </tr>
         </thead>
         <tbody>
@@ -46,14 +44,8 @@ function TelemetryTable({ data }) {
                 <td>{startIndex + i + 1}</td>
                 <td>{tanggal}</td>
                 <td>{waktu}</td>
-                <td>{d?.DO?.toFixed?.(2) ?? "-"}</td>
                 <td>{d?.predicted_DO?.toFixed?.(2) ?? "-"}</td>
                 <td>{d?.insight ?? "-"}</td>
-                <td>{d?.pH ?? "-"}</td>
-                <td>{d?.Temp ?? "-"}</td>
-                <td>{d?.Cond ?? "-"}</td>
-                <td>{d?.Depth ?? "-"}</td>
-                <td>{d?.DOsat ?? "-"}</td>
               </tr>
             );
           })}
